@@ -102,3 +102,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# addition...
+.DS_Store
+# /result/*.png
+
