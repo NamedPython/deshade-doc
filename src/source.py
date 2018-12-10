@@ -7,10 +7,12 @@ IMG_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/../img'
 RESULT_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/../result'
 IMG = ''
 
+print(cv2.__version__)
+
 try:
     IMG = sys.argv[1]
 except Exception as e:
-    IMG = 'note.png' 
+    IMG = 'note.png'
 
 def write_out(img, name):
     cv2.imwrite(f'{RESULT_DIR}/{name}.png', img)
@@ -22,12 +24,12 @@ ret, thed = cv2.threshold(image_gray, 0, 255, cv2.THRESH_OTSU)
 
 write_out(thed, 'thed')
 
-kernel = np.ones((14, 14), np.uint8)
+kernel = np.ones((8, 8), np.uint8)
 morphed = cv2.morphologyEx(thed, cv2.MORPH_CLOSE, kernel)
 
 write_out(morphed, 'morphedA')
 
-kernel = np.ones((20, 20), np.uint8)
+kernel = np.ones((8, 8), np.uint8)
 morphed = cv2.morphologyEx(morphed, cv2.MORPH_RECT, kernel)
 
 write_out(morphed, 'morphedB')
@@ -39,28 +41,33 @@ write_out(inv_morphed, 'inv_morphedA')
 conts_im, conts, hierarchy = cv2.findContours(inv_morphed, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
 # draw contours in thesholded image
-# size = image.shape[:3]
-# colored = np.zeros(size, dtype=np.uint8)
-# colored.fill(0)
+colored = cv2.merge((morphed, morphed, morphed))
 # for x, row in enumerate(thed):
 #     for y, cell in enumerate(row):
 #         if cell != 0:
 #             colored[x][y] = (255, 255, 255)
 
-# for index in range(len(conts)):
-#     print(index)
-#     cv2.drawContours(conts_drawed, conts, index, 255, -1)
+for index in range(len(conts)):
+    cv2.drawContours(colored, conts, index, (255, 0, 255), 3)
 
-choosed = 0
+write_out(colored, 'colored')
+
+choosed = 4
 
 mask = np.zeros_like(image_gray)
-cv2.drawContours(mask, conts, choosed, 255, -1)
+for index in range(len(conts)):
+    if (cv2.contourArea(conts[index]) > 20000): # TODO: change to scheme
+        cv2.drawContours(mask, conts, index, 255, -1)
 
 write_out(mask, 'conts_drawed')
 
-cropped = np.zeros_like(mask)
+cropped = cv2.merge((np.zeros_like(mask), np.zeros_like(mask), np.zeros_like(mask)))
 
-cropped[mask == 255] = image_gray[mask == 255]
+cropped[mask == 255] = image[mask == 255]
+alpha = np.ones_like(cropped) * 255
+cropped = cv2.merge((cropped, alpha[:, :, 1]))
+
+cropped[mask == 0] = (0, 0, 0, 0)
 
 (x, y) = np.where(mask == 255)
 (topx, topy) = (np.min(x), np.min(y))
