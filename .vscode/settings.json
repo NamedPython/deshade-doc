@@ -1,3 +1,5 @@
 {
-  "python.pythonPath": "/Users/namedpython/.pyenv/versions/3.7.1/bin/python"
+  "python.pythonPath": "/Users/namedpython/.pyenv/versions/3.7.1/bin/python",
+  "python.linting.enabled": false,
+  "python.linting.pylintEnabled": true
 }
