@@ -27,7 +27,7 @@ def crop(mask, target):
 
     return topx, topy, cropped[topx:bottomx+1, topy:bottomy+1]
 
-def light_up(target, gamma=1.15):
+def light_up(target, gamma=1.18):
     look_up_table = np.zeros((256, 1), dtype=np.uint8)
 
     for i in range(256):
@@ -38,14 +38,14 @@ def light_up(target, gamma=1.15):
 try:
     IMG = sys.argv[1]
 except Exception as e:
-    IMG = 'note.png'
+    IMG = 'note01.jpg'
 
 counter = 0
 while(True):
     print(f'starting loop: {counter}')
     image = cv2.imread(f'{IMG_DIR}/{IMG}')
 
-    h, _, _ = image.shape
+    h = image.shape[1]
     if h > RESIZE_THRESH or h < RESIZE_THRESH:
         print(f'height: {h}, too big, resize')
         persentage = RESIZE_THRESH / h
@@ -82,7 +82,7 @@ while(True):
     mask = np.zeros_like(image_gray)
     stopper = 0
     for index in range(len(conts)):
-        if (cv2.contourArea(conts[index]) > 20000): # TODO: change to scheme
+        if (cv2.contourArea(conts[index]) > 12000): # TODO: change to scheme
             cv2.drawContours(mask, conts, index, 255, -1)
             stopper+=1
 
@@ -113,3 +113,6 @@ while(True):
 
     IMG = 'complete.png' # gonna loop baby
     counter+=1
+
+    # if counter == 1:
+    #     break
