@@ -34,7 +34,7 @@ Remove shadow from hand-scanned documents image. My graduation researches at The
 - `result/thed.png`: input image just thresholded with `cv2.THRESH_OTSU`
 - `result/thed_completed.png`: thresholded, and completed image.
 
-### `deshade-doc` + `evaluate`
+#### `deshade-doc` + `evaluate`
 
 - `result/thed.png`, `result/thed_completed.png`: same above.
 - `result/thed_scanned.png`: scanned image just thresholded with `cv2.THRESH_OTSU` for compare.
